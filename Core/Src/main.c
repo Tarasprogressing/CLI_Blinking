@@ -23,6 +23,7 @@
 /* USER CODE BEGIN Includes */
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 /* USER CODE END Includes */
 
@@ -67,17 +68,22 @@ void Command_processor(char *cmd)
 	{
 	if(strcmp(cmd, "led on") == 0)
 	{
-		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_SET);
 		uart_send("LED is ON \r\n");
 	}
 	else if(strcmp(cmd, "led off") == 0)
 	{
-		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_RESET);
 		uart_send("LED is OFF \r\n");
 	}
 	else if(strcmp(cmd, "status") == 0)
 	{
-		uart_send("The System is in order \r\n");
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_SET);
+		uart_send("LED: ON \r\nBaud rate: 38400 \r\n");
+	}
+	else if(strcmp(cmd, "help") == 0)
+	{
+		uart_send("Available commands: \r\n help \r\n status \r\n led on \r\n led off \r\n blink <count> <delay> \r\n Example: \r\n blink 5 500 \r\n");
 	}
 	else if(strncmp(cmd, "blink", 5) == 0)
 	{
@@ -158,9 +164,9 @@ void Command_processor(char *cmd)
 
 	    for(int blk = 0; blk < cnt; blk++)
 	    {
-	        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
+	        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_SET);
 	        HAL_Delay(delay);
-	        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
+	        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_RESET);
 	        HAL_Delay(delay);
 	    }
 
@@ -218,9 +224,14 @@ int main(void)
   {
 	 if(HAL_UART_Receive(&huart2, &rx, 1, 10) == HAL_OK)
 	  {
+		 HAL_UART_Transmit(&huart2, &rx, 1, 10);
+
 		 if(rx == '\r' || rx == '\n')
 		{
 		  buffer[idx] = 0;
+		  uart_send("CMD: ");
+		  uart_send(buffer);
+		  uart_send("\r\n");
 		  Command_processor(buffer);
 		  idx = 0;
 		  buffer[0] = 0;
@@ -303,7 +314,7 @@ static void MX_USART2_UART_Init(void)
 
   /* USER CODE END USART2_Init 1 */
   huart2.Instance = USART2;
-  huart2.Init.BaudRate = 115200;
+  huart2.Init.BaudRate = 38400;
   huart2.Init.WordLength = UART_WORDLENGTH_8B;
   huart2.Init.StopBits = UART_STOPBITS_1;
   huart2.Init.Parity = UART_PARITY_NONE;
@@ -343,6 +354,9 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
 
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_RESET);
+
   /*Configure GPIO pin : B1_Pin */
   GPIO_InitStruct.Pin = B1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
@@ -355,6 +369,13 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(LD2_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PC10 */
+  GPIO_InitStruct.Pin = GPIO_PIN_10;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
 

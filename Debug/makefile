@@ -34,34 +34,34 @@ $(wildcard ../makefile.init) \
 $(wildcard ../makefile.targets) \
 
 
-BUILD_ARTIFACT_NAME := Blink_5
+BUILD_ARTIFACT_NAME := CLI_Blinking
 BUILD_ARTIFACT_EXTENSION := elf
 BUILD_ARTIFACT_PREFIX :=
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXECUTABLES += \
-Blink_5.elf \
+CLI_Blinking.elf \
 
 MAP_FILES += \
-Blink_5.map \
+CLI_Blinking.map \
 
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
-Blink_5.list \
+CLI_Blinking.list \
 
 
 # All Target
 all: main-build
 
 # Main-build Target
-main-build: Blink_5.elf secondary-outputs
+main-build: CLI_Blinking.elf secondary-outputs
 
 # Tool invocations
-Blink_5.elf Blink_5.map: $(OBJS) $(USER_OBJS) C:\CubeMX\Blink_5\STM32F303RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "Blink_5.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\CubeMX\Blink_5\STM32F303RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Blink_5.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+CLI_Blinking.elf CLI_Blinking.map: $(OBJS) $(USER_OBJS) C:\CubeMX\Blink_5\STM32F303RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "CLI_Blinking.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\CubeMX\Blink_5\STM32F303RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="CLI_Blinking.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -70,14 +70,14 @@ default.size.stdout: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-Blink_5.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "Blink_5.list"
+CLI_Blinking.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "CLI_Blinking.list"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) Blink_5.elf Blink_5.list Blink_5.map default.size.stdout
+	-$(RM) CLI_Blinking.elf CLI_Blinking.list CLI_Blinking.map default.size.stdout
 	-@echo ' '
 
 secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)
